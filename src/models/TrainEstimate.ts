@@ -1,0 +1,3 @@
+interface TrainEstimate {
+  arriving: number;
+}

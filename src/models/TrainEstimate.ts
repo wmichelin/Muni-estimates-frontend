@@ -1,3 +1,6 @@
 interface TrainEstimate {
-  arriving: number;
+  lineTitle: string;
+  stopDescription: string;
+  directionDescription: string;
+  estimates: number[];
 }

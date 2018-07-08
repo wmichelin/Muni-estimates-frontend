@@ -13,17 +13,21 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "paths": {
-      "@constants": ["./src/constants"],
-      "@constants/*": ["./src/constants/*"],
+      "@actions": ["./src/actions"],
+      "@actions/*": ["./src/actions/*"],
       "@components": ["./src/components"],
       "@components/*": ["./src/components/*"],
+      "@constants": ["./src/constants"],
+      "@constants/*": ["./src/constants/*"],
       "@models": ["./src/models"],
-      "@models/*": ["./src/models/*"]
+      "@models/*": ["./src/models/*"],
+      "@reducers": ["./src/reducers"],
+      "@reducers/*": ["./src/reducers/*"]
     }
   },
   "exclude": [

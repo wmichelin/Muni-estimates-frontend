@@ -1,6 +1,10 @@
-interface TrainEstimate {
+interface RouteDirection {
+  description: string;
+  estimates: number[];
+}
+
+export interface TrainEstimate {
   lineTitle: string;
   stopDescription: string;
-  directionDescription: string;
-  estimates: number[];
+  directions: RouteDirection[];
 }

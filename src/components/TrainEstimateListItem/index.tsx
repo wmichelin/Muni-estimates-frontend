@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
+import { TrainEstimate } from '@models/TrainEstimate';
 
 interface OwnProps {
   trainEstimate: TrainEstimate;
@@ -27,8 +28,7 @@ const TrainEstimateListItem = (props: Props) => {
   const {
     lineTitle,
     stopDescription,
-    directionDescription,
-    estimates,
+    directions,
   } = props.trainEstimate;
 
   return (
@@ -38,10 +38,7 @@ const TrainEstimateListItem = (props: Props) => {
       </LineTitleHeader>
       <StopDescriptionHeader>{ stopDescription }</StopDescriptionHeader>
       <div>
-        { directionDescription }
-      </div>
-      <div>
-        { JSON.stringify(estimates) }
+        { JSON.stringify(directions) }
       </div>
     </ListItemContainer>
   )

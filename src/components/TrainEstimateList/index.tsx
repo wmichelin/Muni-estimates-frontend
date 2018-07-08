@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { createStructuredSelector } from 'reselect';
-import { TrainEstimates } from '@constants/fake-data';
 import TrainEstimateListItem from '@components/TrainEstimateListItem'
 import { connect } from 'react-redux';
+import { estimatesRequested } from '@actions';
+import { TrainEstimate } from '@models/TrainEstimate';
 
 interface OwnProps {}
 
@@ -10,24 +11,44 @@ interface StateProps {
   trainEstimates: TrainEstimate[];
 }
 
-type Props = OwnProps & StateProps;
+interface DispatchProps {
+  estimatesRequested(): void;
+}
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 const selector = createStructuredSelector({
-  trainEstimates: () => TrainEstimates,
+  trainEstimates: (state) => state.trainEstimates.models,
 });
 
-console.log(process.env);
+const dispatcher = (dispatch) => ({
+  estimatesRequested: () => dispatch(estimatesRequested()),
+});
 
-const connector = connect<StateProps>(selector);
+const connector = connect<StateProps, DispatchProps>(selector, dispatcher);
 
-const TrainEstimateList = (props: Props) => (
-  <React.Fragment>
-    {
-      props.trainEstimates.map((trainEstimate) => (
-        <TrainEstimateListItem trainEstimate={ trainEstimate }/>
-      ))
-    }
-  </React.Fragment>
-);
+class TrainEstimateList extends React.PureComponent<Props> {
+  interval: NodeJS.Timer;
+
+  componentDidMount() {
+    this.interval = setInterval(() => this.props.estimatesRequested(), 1000);
+  }
+  
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  render() {
+    return (
+      <React.Fragment>
+        {
+          this.props.trainEstimates.map((trainEstimate, idx) => (
+            <TrainEstimateListItem key={ idx } trainEstimate={ trainEstimate }/>
+          ))
+        }
+      </React.Fragment>
+    )
+  }
+}
 
 export default connector(TrainEstimateList);

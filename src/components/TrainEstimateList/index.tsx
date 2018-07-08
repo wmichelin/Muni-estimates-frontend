@@ -16,6 +16,8 @@ const selector = createStructuredSelector({
   trainEstimates: () => TrainEstimates,
 });
 
+console.log(process.env);
+
 const connector = connect<StateProps>(selector);
 
 const TrainEstimateList = (props: Props) => (

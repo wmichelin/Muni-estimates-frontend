@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { BrowserRouter as Router, Route, Switch, } from 'react-router-dom';
-import TrainEstimateList from 'src/components/TrainEstimateList';
+import TrainEstimateList from '@components/TrainEstimateList';
 
 const App = () => (
   <Router>

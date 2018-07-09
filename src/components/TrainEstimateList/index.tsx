@@ -3,12 +3,14 @@ import { createStructuredSelector } from 'reselect';
 import TrainEstimateListItem from '@components/TrainEstimateListItem'
 import { connect } from 'react-redux';
 import { estimatesRequested } from '@actions';
-import { TrainEstimate } from '@models/TrainEstimate';
+import { TrainEstimateMap } from '@models/TrainEstimate';
+import LoadingSpinner from '@components/LoadingSpinner';
 
 interface OwnProps {}
 
 interface StateProps {
-  trainEstimates: TrainEstimate[];
+  trainEstimates: TrainEstimateMap;
+  isLoading: boolean;
 }
 
 interface DispatchProps {
@@ -19,6 +21,7 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 const selector = createStructuredSelector({
   trainEstimates: (state) => state.trainEstimates.models,
+  isLoading: (state) => state.trainEstimates.loading,
 });
 
 const dispatcher = (dispatch) => ({
@@ -31,7 +34,8 @@ class TrainEstimateList extends React.PureComponent<Props> {
   interval: NodeJS.Timer;
 
   componentDidMount() {
-    this.interval = setInterval(() => this.props.estimatesRequested(), 1000);
+    this.props.estimatesRequested();
+    this.interval = setInterval(() => this.props.estimatesRequested(), 4000);
   }
   
   componentWillUnmount() {
@@ -39,12 +43,24 @@ class TrainEstimateList extends React.PureComponent<Props> {
   }
 
   render() {
+    const { trainEstimates } = this.props;
+
     return (
       <React.Fragment>
         {
-          this.props.trainEstimates.map((trainEstimate, idx) => (
-            <TrainEstimateListItem key={ idx } trainEstimate={ trainEstimate }/>
-          ))
+            this.props.isLoading
+              ? <LoadingSpinner />
+              : null
+        }
+        {
+          Object.keys(trainEstimates).map(
+            (key, idx) => (
+              <TrainEstimateListItem
+                key={ key }
+                trainEstimate={ trainEstimates[key] }
+              />
+            )
+          )
         }
       </React.Fragment>
     )

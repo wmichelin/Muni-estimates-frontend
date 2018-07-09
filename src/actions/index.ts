@@ -1,33 +1,50 @@
 import axios from  'axios';
-import { TrainEstimate } from '@models/TrainEstimate';
+import { TrainEstimateMap } from '@models/TrainEstimate';
 
 export const ESTIMATES_REQUESTED = 'ESTIMATES__ESTIMATES_REQUESTED';
 export const ESTIMATES_LOADED = 'ESTIMATES__ESTIMATES_LOADED';
 
-const normalizeEstimatesResponse = (data): TrainEstimate[] => data.map(
-  estimateResult => ({
-    lineTitle: estimateResult.lineTitle,
-    stopDescription: estimateResult.stopDescription,
-    directions: estimateResult.directionResults.map(directionResult => ({
+const INBOUND_TOKEN = 'inbound';
+const OUTBOUND_TOKEN = 'outbound';
+
+const getKeyFromRawEstimate = (rawEstimate) => rawEstimate.lineTitle.split('-')[0];
+
+const normalizeEstimatesResponse = (rawEstimates): TrainEstimateMap => rawEstimates.reduce((acc, rawEstimate) => {
+  const key = getKeyFromRawEstimate(rawEstimate);
+  if (!acc[key]) {
+    acc[key] = {
+      lineTitle: key,
+      outbound: [],
+      inbound: [],
+    }
+  }
+
+  const record = acc[key];
+  rawEstimate.directionResults.forEach(directionResult => {
+    const token = directionResult.directionDescription.toLowerCase().includes(INBOUND_TOKEN) ? INBOUND_TOKEN : OUTBOUND_TOKEN;
+    record[token].push({
       description: directionResult.directionDescription,
       estimates: directionResult.estimates,
-    })),
-  })
-);
+    })
+  });
+
+  acc[key] = record;
+  return acc;
+}, {});
 
 export const estimatesRequested = () => async (dispatch) => {
-  const response = await axios.get(process.env.REACT_APP_API_ESTIMATES_ENDPOINT!);
-  const { data } = response;
+  axios.get(process.env.REACT_APP_API_ESTIMATES_ENDPOINT!).then((response) => {
+    const { data } = response;
+    if (data) {
+      dispatch(estimatesLoaded(
+        normalizeEstimatesResponse(data)
+      ));
+    }
+  });
 
-  if (data) {
-    dispatch(estimatesLoaded(
-      normalizeEstimatesResponse(data)
-    ));
-  }
-
-  return {
+  dispatch({
     type: ESTIMATES_REQUESTED,
-  }
+  });
 };
 
 const estimatesLoaded = (payload) => ({

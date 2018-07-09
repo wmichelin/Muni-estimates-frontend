@@ -3,8 +3,12 @@ interface RouteDirection {
   estimates: number[];
 }
 
+type TrainKey = string;
+
 export interface TrainEstimate {
-  lineTitle: string;
-  stopDescription: string;
-  directions: RouteDirection[];
+  lineTitle: TrainKey; // 28, 28R, N
+  outbound: RouteDirection[];
+  inbound: RouteDirection[];
 }
+
+export interface TrainEstimateMap extends Map<TrainKey, TrainEstimate>{}
